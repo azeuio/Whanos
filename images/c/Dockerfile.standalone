@@ -1,4 +1,8 @@
-FROM whanos-c as builder
+FROM amd64/gcc:13.2 as builder
+
+SHELL [ "/bin/bash", "-c" ]
+
+WORKDIR /app
 
 COPY Makefile .
 
@@ -6,10 +10,7 @@ COPY app/ app/
 
 RUN ["make"]
 
-FROM whanos-c
+RUN ["find", ".", "-type", "f", "!", "-name", "compiled-app", "-exec", "rm", "-f", "{}", "+"]
+RUN ["rm", "-rf", "app/"]
 
-WORKDIR /app
-
-COPY --from=builder /app/compiled-app compiled-app
-
-CMD ["/app/compiled-app"]
+ENTRYPOINT [ "./compiled-app" ]
