@@ -1,0 +1,7 @@
+FROM scratch
+
+WORKDIR /app
+
+SHELL [ "/bin/bash", "-c" ]
+
+COPY --from=node:20.9-alpine / /

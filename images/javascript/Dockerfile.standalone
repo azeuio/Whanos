@@ -1,0 +1,13 @@
+FROM whanos-javascript as builder
+
+WORKDIR /app
+
+SHELL [ "/bin/bash", "-c" ]
+
+COPY ./package.json .
+
+RUN ["npm", "install"]
+
+COPY ./app app
+
+CMD ["node", "."]
