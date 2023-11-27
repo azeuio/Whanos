@@ -1,0 +1,7 @@
+FROM scratch
+
+SHELL [ "/bin/bash", "-c" ]
+
+WORKDIR /app
+
+COPY --from=python:3.12-alpine / /
