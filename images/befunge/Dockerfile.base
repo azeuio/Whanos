@@ -1,11 +1,13 @@
-FROM scratch
+FROM node:lts
 
 SHELL [ "/bin/bash", "-c" ]
 
 WORKDIR /app
 
-COPY --from=node:lts / /
+ONBUILD RUN ["npm", "install", "befunge93"]
 
-RUN ["npm", "install", "befunge93"]
+ONBUILD RUN ["curl", "-L", "https://gist.githubusercontent.com/Octopus773/af90e3164cbb5a2cfeb786f0590a89a6/raw/e0ae92fd1ea8fa8e5030605f3797f43837c3430f/befunge93-cli.js", "-o", "befunge-runner.js"]
 
-RUN ["curl", "-L", "https://gist.githubusercontent.com/Octopus773/af90e3164cbb5a2cfeb786f0590a89a6/raw/e0ae92fd1ea8fa8e5030605f3797f43837c3430f/befunge93-cli.js", "-o", "befunge-runner.js"]
+ONBUILD COPY ./app/main.bf app/
+
+ENTRYPOINT ["node", "befunge-runner.js", "-f", "app/main.bf"]
