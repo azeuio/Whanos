@@ -1,7 +1,15 @@
-FROM scratch
+FROM python:3.12
 
 SHELL [ "/bin/bash", "-c" ]
 
 WORKDIR /app
 
-COPY --from=python:3.12-alpine / /
+ONBUILD COPY requirements.txt .
+
+ONBUILD RUN ["pip", "install", "--no-cache-dir", "-r", "requirements.txt"]
+
+ONBUILD RUN ["rm", "requirements.txt"]
+
+ONBUILD COPY ./app/ app/
+
+ENTRYPOINT ["python", "-m", "app" ]
