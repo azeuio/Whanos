@@ -1,4 +1,4 @@
-FROM whanos-javascript as builder
+FROM node:20.9-alpine
 
 WORKDIR /app
 
@@ -10,4 +10,4 @@ RUN ["npm", "install"]
 
 COPY ./app app
 
-CMD ["node", "."]
+ENTRYPOINT ["node", "."]
