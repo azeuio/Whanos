@@ -1,0 +1,7 @@
+FROM scratch
+
+SHELL [ "/bin/bash", "-c" ]
+
+WORKDIR /app
+
+COPY --from=amd64/gcc:13.2 / /
