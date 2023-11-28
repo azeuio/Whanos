@@ -16,23 +16,28 @@ def main(template_file, partial_kube_file):
             sys.exit(1)
     with open(template_file, 'r') as stream:
         try:
-            default = yaml.safe_load(stream)
+            template = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
             sys.exit(1)
 
+    if len(kube) > 1 or ('deployment' not in kube and len(kube) == 1):
+        print('whanos.yml should only have one key (deployment)', file=sys.stderr)
+        sys.exit(1)
     if not kube['deployment']:
         sys.exit(0)
     if 'replicas' in kube['deployment']:
-        default['spec']['replicas'] = kube['deployment']['replicas']
+        template['spec']['replicas'] = kube['deployment']['replicas']
     if 'resources' in kube['deployment']:
         for resource in kube['deployment']['resources']:
-            default['spec']['template']['spec']['containers'][0]['resources'][resource] = kube['deployment']['resources'][resource]
+            if template['spec']['template']['spec']['containers'][0].get('resources', None) is None:
+                template['spec']['template']['spec']['containers'][0]['resources'] = dict()
+            template['spec']['template']['spec']['containers'][0]['resources'][resource] = kube['deployment']['resources'][resource]
     if 'ports' in kube['deployment']:
-        default['spec']['template']['spec']['containers'][0]['ports'] = kube['deployment']['ports']
+        template['spec']['template']['spec']['containers'][0]['ports'] = kube['deployment']['ports']
 
     with open('whanos-full.yaml', 'w') as outfile:
-        yaml.dump(default, outfile, default_flow_style=False)
+        yaml.dump(template, outfile, default_flow_style=False)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a kubernetes cluster from a whanos cluster')
