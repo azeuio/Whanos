@@ -2,3 +2,5 @@
 requirements.txt
 package.json
 Makefile
+/.vscode/
+/.idea/
