@@ -9,6 +9,8 @@ ONBUILD COPY ./app/src /app/src
 
 ONBUILD RUN ["mvn", "package"]
 
-ONBUILD RUN ["rm", "-rf", "/app/src"]
+ONBUILD RUN ["cp", "/app/target/app.jar", "/app/app.jar"]
 
-ENTRYPOINT ["java", "-jar", "/app/target/app.jar"]
+ONBUILD RUN ["rm", "-rf", "/app/target", "/app/pom.xml", "/app/src"]
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
