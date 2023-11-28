@@ -1,0 +1,16 @@
+FROM amd64/gcc:13.2 as builder
+
+SHELL [ "/bin/bash", "-c" ]
+
+WORKDIR /app
+
+ONBUILD COPY Makefile .
+
+ONBUILD COPY app/ app/
+
+ONBUILD RUN ["make"]
+
+ONBUILD RUN ["find", ".", "-type", "f", "!", "-name", "compiled-app", "-exec", "rm", "-f", "{}", "+"]
+ONBUILD RUN ["rm", "-rf", "app/"]
+
+ENTRYPOINT [ "./compiled-app" ]
