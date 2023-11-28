@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whanos-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: whanos
+  template: # pod template
+    metadata:
+      labels:
+        app: whanos
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: name
+                    operator: In
+                    values:
+                      - whanos
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: whanos
+          image: azeuio/whanos:latest
