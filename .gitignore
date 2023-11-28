@@ -4,3 +4,4 @@ package.json
 Makefile
 /.vscode/
 /.idea/
+whanos-full.yaml
