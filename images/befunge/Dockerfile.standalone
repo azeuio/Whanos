@@ -7,8 +7,7 @@ WORKDIR /app
 RUN ["npm", "install", "befunge93"]
 
 RUN ["curl", "-L", "https://gist.githubusercontent.com/Octopus773/af90e3164cbb5a2cfeb786f0590a89a6/raw/e0ae92fd1ea8fa8e5030605f3797f43837c3430f/befunge93-cli.js", "-o", "befunge-runner.js"]
-COPY hello-world.js .
 
 COPY ./app/main.bf app/
 
-CMD ["node", "befunge-runner.js", "-f", "app/main.bf"]
+ENTRYPOINT ["node", "befunge-runner.js", "-f", "app/main.bf"]
