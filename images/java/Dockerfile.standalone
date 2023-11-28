@@ -9,4 +9,6 @@ COPY ./app/src /app/src
 
 RUN ["mvn", "package"]
 
+RUN ["rm", "-rf", "/app/src"]
+
 ENTRYPOINT ["java", "-jar", "/app/target/app.jar"]
