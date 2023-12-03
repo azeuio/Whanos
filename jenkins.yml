@@ -1,0 +1,47 @@
+jenkins:
+  remotingSecurity:
+    enabled: true
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin1"
+          name: "Admin1"
+          password: "${ADMIN_PASSWORD}"
+          description: "DEBUG: Admin user configured"
+  authorizationStrategy:
+    roleBased:
+      roles:
+        global:
+          - name: "admin2"
+            description: "Jenkins master"
+            permissions:
+              - "Overall/Administer"
+            assignments:
+              - "admin1"
+  unclassified:
+    globalConfigFiles:
+      # Assurez-vous que cette section est correcte
+      folderConfig:
+        config:
+          folders:
+            - views:
+                - name: "Whanos base images"
+                - name: "Projects"
+
+
+jobDSL:
+  targets:
+    - file: "./job_dsl.groovy"
+security:
+  globalJobDslSecurityConfiguration:
+    useScriptSecurity: false
+
+# jobs:
+#   - file: ./job_dsl.groovy
+
+  #         properties:
+  #           - "fullControl"
+  # authorizationStrategy:
+  #   loggedInUsersCanDoAnything:
+  #     allowAnonymousRead: false
