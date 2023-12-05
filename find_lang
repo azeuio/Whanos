@@ -35,7 +35,7 @@ def detect_lang(path):
     lang = find_lang(path)
     if multiple_lang(path) > 1:
         raise Exception("Multiple languages in one directory")
-    print("Language of the poject is:", lang)
+    print("whanos-"+ lang)
     return 0
 
 args = sys.argv[1:]
