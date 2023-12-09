@@ -1,3 +1,9 @@
+security:
+  globalJobDslSecurityConfiguration:
+    useScriptSecurity: false
+  gitHostKeyVerificationConfiguration:
+      sshHostKeyVerificationStrategy: "acceptFirstConnectionStrategy"
+
 jenkins:
   remotingSecurity:
     enabled: true
@@ -5,43 +11,19 @@ jenkins:
     local:
       allowsSignup: false
       users:
-        - id: "admin1"
-          name: "Admin1"
+        - id: "admin"
+          name: "Admin"
           password: "${ADMIN_PASSWORD}"
           description: "DEBUG: Admin user configured"
   authorizationStrategy:
     roleBased:
       roles:
         global:
-          - name: "admin2"
+          - name: "admin"
             description: "Jenkins master"
             permissions:
               - "Overall/Administer"
-            assignments:
-              - "admin1"
-  unclassified:
-    globalConfigFiles:
-      # Assurez-vous que cette section est correcte
-      folderConfig:
-        config:
-          folders:
-            - views:
-                - name: "Whanos base images"
-                - name: "Projects"
-
-
-jobDSL:
-  targets:
-    - file: "./job_dsl.groovy"
-security:
-  globalJobDslSecurityConfiguration:
-    useScriptSecurity: false
-
-# jobs:
-#   - file: ./job_dsl.groovy
-
-  #         properties:
-  #           - "fullControl"
-  # authorizationStrategy:
-  #   loggedInUsersCanDoAnything:
-  #     allowAnonymousRead: false
+            entries:
+              - user: "Admin"
+jobs:
+  - file: /usr/local/job_dsl.groovy

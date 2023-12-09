@@ -8,3 +8,7 @@ credentials:latest
 github:latest
 role-strategy:latest
 ws-cleanup:latest
+docker-commons:latest
+docker-java-api:latest
+docker-plugin:latest
+docker-workflow:latest
