@@ -25,4 +25,3 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
         - name: whanos
-          image: azeuio/whanos:latest
