@@ -7,7 +7,7 @@ import yaml
 import sys
 import argparse
 
-def main(template_file, partial_kube_file):
+def main(template_file, partial_kube_file, image_id):
     with open(partial_kube_file, 'r') as stream:
         try:
             kube = yaml.safe_load(stream)
@@ -26,6 +26,7 @@ def main(template_file, partial_kube_file):
         sys.exit(1)
     if not kube['deployment']:
         sys.exit(0)
+    template['spec']['template']['spec']['containers'][0]['image'] = image_id
     if 'replicas' in kube['deployment']:
         template['spec']['replicas'] = kube['deployment']['replicas']
     if 'resources' in kube['deployment']:
@@ -48,5 +49,7 @@ if __name__ == '__main__':
                         help='The partial kubernetes file to use')
     parser.add_argument('template_file', metavar='TEMPLATE_FILE', type=str,
                         help='The kubernetes file to add the partial kube file info to')
+    parser.add_argument('image_id', metavar='IMAGE_ID', type=str,
+                        help='The id of the image on a docker registry')
     namespace = parser.parse_args()
-    main(namespace.template_file, namespace.partial_kube_file)
+    main(namespace.template_file, namespace.partial_kube_file, namespace.image_id)
