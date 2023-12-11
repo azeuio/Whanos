@@ -13,15 +13,15 @@ spec:
       labels:
         app: whanos
     spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: name
-                    operator: In
-                    values:
-                      - whanos
-              topologyKey: "kubernetes.io/hostname"
+      # affinity:
+      #   podAntiAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       - labelSelector:
+      #           matchExpressions:
+      #             - key: name
+      #               operator: In
+      #               values:
+      #                 - whanos
+      #         topologyKey: "kubernetes.io/hostname"
       containers:
         - name: whanos
