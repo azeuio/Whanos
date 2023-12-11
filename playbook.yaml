@@ -1,0 +1,25 @@
+- name: deploy-insance
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Print message
+      ansible.builtin.debug:
+        msg: Hello world
+
+    - name: Get Jenkins repo key
+      ansible.builtin.get_url:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+        dest: /usr/share/keyrings/jenkins-keyring.asc
+      become: true
+
+    - name: Add Jenkins repository
+      ansible.builtin.apt_repository:
+        repo: deb http://pkg.jenkins.io/debian-stable binary/
+        update_cache: yes
+      become: true
+
+    - name: Install Jenkins
+      ansible.builtin.apt:
+        name: jenkins
+        state: present
+      become: true
