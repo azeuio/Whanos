@@ -34,7 +34,10 @@ def main(template_file, partial_kube_file):
                 template['spec']['template']['spec']['containers'][0]['resources'] = dict()
             template['spec']['template']['spec']['containers'][0]['resources'][resource] = kube['deployment']['resources'][resource]
     if 'ports' in kube['deployment']:
-        template['spec']['template']['spec']['containers'][0]['ports'] = kube['deployment']['ports']
+        template['spec']['template']['spec']['containers'][0]['ports'] = []
+        for i, port in enumerate(kube['deployment']['ports']):
+            template['spec']['template']['spec']['containers'][0]['ports'].append(dict())
+            template['spec']['template']['spec']['containers'][0]['ports'][i]['containerPort'] = port
 
     with open('whanos-full.yaml', 'w') as outfile:
         yaml.dump(template, outfile, default_flow_style=False)
