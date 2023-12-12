@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:latest
+FROM myjenkins-blueocean:2.426.1-1
 USER root
 RUN apt-get update && \
     apt-get install -y make && \

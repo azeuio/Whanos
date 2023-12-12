@@ -18,9 +18,19 @@
       register: network_info
 
     - name: Create jenkins network if not exists
-      ansible.builtin.command: docker network create jenkins
+      ansible.builtin.command: docker network create jenkin
       become: true
       when: network_info.rc != 0
+
+    - name: Stop and remove jenkins-blueocean if exists
+      ansible.builtin.command: docker rm --force jenkins-blueocean
+      become: true
+      ignore_errors: true
+
+    - name: Stop and remove jenkins-docker if exists
+      ansible.builtin.command: docker rm --force jenkins-docker
+      become: true
+      ignore_errors: true
 
     - name: run Docker in docker
       ansible.builtin.command: docker run --name jenkins-docker --rm --detach \
@@ -32,8 +42,14 @@
         docker:dind --storage-driver overlay2
       become: true
 
-    - name: run Jenkins
-      ansible.builtin.command: docker run --name whanos-jenkins-container --restart=on-failure --detach \
+    - name: Create jenkins-blueocean image
+      ansible.builtin.command: docker build -t whanos-jenkins . -f myjenkins-blueocean.Dockerfile
+
+    - name: Create our jenkins instance
+      ansible.builtin.command: docker build -t whanos-jenkins . -f Dockerfile
+
+    - name: run Jenkins in docker on port 8080
+      ansible.builtin.command: docker run --name jenkins-blueocean --restart=on-failure --detach \
         --network jenkins --env DOCKER_HOST=tcp://docker:2376 \
         --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 \
         --publish 8080:8080 --publish 50000:50000 \
