@@ -6,20 +6,38 @@
       ansible.builtin.debug:
         msg: Hello world
 
-    - name: Get Jenkins repo key
-      ansible.builtin.get_url:
-        url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
-        dest: /usr/share/keyrings/jenkins-keyring.asc
-      become: true
-
-    - name: Add Jenkins repository
-      ansible.builtin.apt_repository:
-        repo: deb http://pkg.jenkins.io/debian-stable binary/
-        update_cache: yes
-      become: true
-
-    - name: Install Jenkins
+    - name: Install Docker
       ansible.builtin.apt:
-        name: jenkins
+        name: docker.io
         state: present
+      become: true
+
+    - name: Check if the Docker jenkins network exists
+      command: docker network inspect jenkins
+      ignore_errors: true
+      register: network_info
+
+    - name: Create jenkins network if not exists
+      ansible.builtin.command: docker network create jenkins
+      become: true
+      when: network_info.rc != 0
+
+    - name: run Docker in docker
+      ansible.builtin.command: docker run --name jenkins-docker --rm --detach \
+        --privileged --network jenkins --network-alias docker \
+        --env DOCKER_TLS_CERTDIR=/certs \
+        --volume jenkins-docker-certs:/certs/client \
+        --volume jenkins-data:/var/jenkins_home \
+        --publish 2376:2376 \
+        docker:dind --storage-driver overlay2
+      become: true
+
+    - name: run Jenkins
+      ansible.builtin.command: docker run --name whanos-jenkins-container --restart=on-failure --detach \
+        --network jenkins --env DOCKER_HOST=tcp://docker:2376 \
+        --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 \
+        --publish 8080:8080 --publish 50000:50000 \
+        --volume jenkins-data:/var/jenkins_home \
+        --volume jenkins-docker-certs:/certs/client:ro \
+        whanos-jenkins
       become: true
