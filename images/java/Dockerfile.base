@@ -1,0 +1,16 @@
+FROM maven:3-eclipse-temurin-21
+
+SHELL [ "/bin/bash", "-c" ]
+
+WORKDIR /app
+
+ONBUILD COPY ./app/pom.xml /app/pom.xml
+ONBUILD COPY ./app/src /app/src
+
+ONBUILD RUN ["mvn", "package"]
+
+ONBUILD RUN ["cp", "/app/target/app.jar", "/app/app.jar"]
+
+ONBUILD RUN ["rm", "-rf", "/app/target", "/app/pom.xml", "/app/src"]
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
