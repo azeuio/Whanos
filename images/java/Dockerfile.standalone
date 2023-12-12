@@ -1,0 +1,20 @@
+FROM maven:3-eclipse-temurin-21 AS builder
+
+SHELL [ "/bin/bash", "-c" ]
+
+WORKDIR /app
+
+COPY ./app/pom.xml /app/pom.xml
+COPY ./app/src /app/src
+
+RUN ["mvn", "package"]
+
+FROM maven:3-eclipse-temurin-21
+
+SHELL [ "/bin/bash", "-c" ]
+
+WORKDIR /app
+
+COPY --from=builder /app/target/app.jar /app/app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
