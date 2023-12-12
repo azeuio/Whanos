@@ -39,9 +39,30 @@ def main(template_file, partial_kube_file, image_id):
         for i, port in enumerate(kube['deployment']['ports']):
             template['spec']['template']['spec']['containers'][0]['ports'].append(dict())
             template['spec']['template']['spec']['containers'][0]['ports'][i]['containerPort'] = port
-
-    with open('whanos-full.yaml', 'w') as outfile:
-        yaml.dump(template, outfile, default_flow_style=False)
+        service = dict()
+        service['apiVersion'] = 'v1'
+        service['kind'] = 'Service'
+        service['metadata'] = dict()
+        service['metadata']['name'] = template['spec']['template']['metadata']['labels']['app']
+        service['spec'] = dict()
+        service['spec']['selector'] = dict()
+        service['spec']['selector']['app'] = template['spec']['template']['metadata']['labels']['app']
+        service['spec']['ports'] = []
+        available_port = 30000 # port to redirect to container port to
+        service['spec']['type'] = 'NodePort'
+        for i, port in enumerate(kube['deployment']['ports']):
+            service['spec']['ports'].append(dict())
+            service['spec']['ports'][i]['name'] = 'port' + str(port)
+            service['spec']['ports'][i]['port'] = port
+            service['spec']['ports'][i]['targetPort'] = port
+            service['spec']['ports'][i]['nodePort'] = available_port
+            available_port += 1
+        with open('whanos-full.yaml', 'w') as outfile:
+            # yaml.dump(template, outfile, default_flow_style=False)
+            yaml.dump_all([template, service], outfile, default_flow_style=False)
+    else:
+        with open('whanos-full.yaml', 'w') as outfile:
+            yaml.dump(template, outfile, default_flow_style=False)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a kubernetes cluster from a whanos cluster')
