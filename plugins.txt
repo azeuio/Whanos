@@ -1,0 +1,15 @@
+configuration-as-code:latest
+job-dsl:latest
+script-security:latest
+structs:latest
+instance-identity:latest
+cloudbees-folder:latest
+credentials:latest
+git:latest
+role-strategy:latest
+ws-cleanup:latest
+ssh-credentials:latest
+docker-commons:latest
+docker-java-api:latest
+docker-plugin:latest
+docker-workflow:latest

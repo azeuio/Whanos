@@ -1,0 +1,29 @@
+security:
+  globalJobDslSecurityConfiguration:
+    useScriptSecurity: false
+  gitHostKeyVerificationConfiguration:
+      sshHostKeyVerificationStrategy: "acceptFirstConnectionStrategy"
+
+jenkins:
+  remotingSecurity:
+    enabled: true
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          name: "Admin"
+          password: "${ADMIN_PASSWORD}"
+          description: "DEBUG: Admin user configured"
+  authorizationStrategy:
+    roleBased:
+      roles:
+        global:
+          - name: "admin"
+            description: "Jenkins master"
+            permissions:
+              - "Overall/Administer"
+            entries:
+              - user: "Admin"
+jobs:
+  - file: /usr/local/job_dsl.groovy
