@@ -73,6 +73,10 @@ freeStyleJob('link-project') {
     parameters {
         stringParam('GIT_REPOSITORY_URL', '', 'Git URL of the repository to clone')
         stringParam('JOB_NAME', '', 'Git URL of the repository to clone')
+        stringParam('IMAGE_REPO_LOCATION', 'europe-west2', 'Location of the image repository')
+        stringParam('IMAGE_REPO_URL', '', 'URL of the image repository')
+        booleanParam('IS_DOCKER_REPO_PRIVATE', false, 'Is the docker repository private?')
+        fileParam('key_file.json', 'Key file to access the google cloud repository')
     }
     steps {
         dsl {
@@ -85,19 +89,33 @@ freeStyleJob('link-project') {
                         triggers {
                             cron("* * * * *")
                         }
+                        environmentVariables {
+                            env('PROJECT_NAME', JOB_NAME)
+                            env('GIT_REPOSITORY_URL', GIT_REPOSITORY_URL)
+                            env('IMAGE_REPO_LOCATION', IMAGE_REPO_LOCATION)
+                            env('IS_DOCKER_REPO_PRIVATE', IS_DOCKER_REPO_PRIVATE)
+                            env('IMAGE_NAME', IMAGE_REPO_URL + '/' + JOB_NAME.toLowerCase().replace(' ', '_'))
+                        }
                         steps {
                             scm {
                                 git {
                                     remote {
                                         url(GIT_REPOSITORY_URL)
-                                        credentials(SSH_KEY_REPO)
+                                        // credentials(SSH_KEY_REPO)
                                     }
                                     branches('*/main')
                                 }
                             }
+                            if (IS_DOCKER_REPO_PRIVATE) {
+                                shell('cat ${JENKINS_HOME}/persistent/${PROJECT_NAME}_key_file.json |  docker login -u _json_key --password-stdin https://'+IMAGE_REPO_LOCATION+'-docker.pkg.dev')
+                            }
+                            shell("docker build -t \\${IMAGE_NAME}:v1.\\${BUILD_NUMBER} -t \\${IMAGE_NAME}:latest -f /usr/local/images/`/usr/local/bin/find_lang \\${WORKSPACE}`/Dockerfile.standalone \\${WORKSPACE}")
+                            shell("docker push -a \\${IMAGE_NAME}")
                         }
                     }
                 ''')
         }
+        shell('mkdir -p ${JENKINS_HOME}/persistent && \
+        mv key_file.json ${JENKINS_HOME}/persistent/${PROJECT_NAME}_key_file.json')
     }
 }
