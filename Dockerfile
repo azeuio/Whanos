@@ -1,10 +1,5 @@
 FROM myjenkins-blueocean:2.426.1-1
 USER root
-RUN apt-get update && \
-    apt-get install -y make && \
-    apt-get install -y gcc && \
-    apt-get install -y libcriterion-dev && \
-    apt-get install -y gcovr
 
 COPY jenkins.yml /var/jenkins_home/jenkins.yml
 COPY job_dsl.groovy /usr/local/job_dsl.groovy
