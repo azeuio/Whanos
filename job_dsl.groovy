@@ -73,6 +73,11 @@ freeStyleJob('link-project') {
     description('link project repo')
     parameters {
         stringParam('GIT_REPOSITORY_URL', '', 'Git URL of the repository to clone')
+        booleanParam('IS_GIT_REPO_PRIVATE', false, 'Is the git repository private?')
+        credentialsParam('GIT_CREDENTIALS') {
+            description('Credentials to access the git repository')
+            defaultValue('git-credentials')
+        }
         stringParam('JOB_NAME', '', 'Git URL of the repository to clone')
         stringParam('IMAGE_REPO_LOCATION', 'europe-west2', 'Location of the image repository')
         stringParam('IMAGE_REPO_URL', '', 'URL of the image repository')
@@ -90,10 +95,20 @@ freeStyleJob('link-project') {
                           preBuildCleanup()
                         }
                         scm {
-                            git {
-                                branch(BRANCH)
-                                remote {
-                                    url(GIT_REPOSITORY_URL)
+                            if (IS_GIT_REPO_PRIVATE) {
+                                git {
+                                    branch(BRANCH)
+                                    remote {
+                                        url(GIT_REPOSITORY_URL)
+                                        credentials(GIT_CREDENTIALS)
+                                    }
+                                }
+                            } else {
+                                git {
+                                    branch(BRANCH)
+                                    remote {
+                                        url(GIT_REPOSITORY_URL)
+                                    }
                                 }
                             }
                         }
@@ -125,7 +140,7 @@ freeStyleJob('link-project') {
                     }
             ''')
         shell('mkdir -p ${JENKINS_HOME}/persistent && \
-        mv key_file.json ${JENKINS_HOME}/persistent/${PROJECT_NAME}_key_file.json')
+        mv key_file.json ${JENKINS_HOME}/persistent/${JOB_NAME}_key_file.json')
         }
     }
 }
