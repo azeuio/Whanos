@@ -113,43 +113,42 @@ freeStyleJob('link-project') {
                             }
                             shell("docker build -t \\${IMAGE_NAME}:v1.\\${BUILD_NUMBER} -t \\${IMAGE_NAME}:latest -f /usr/local/images/`/usr/local/bin/find_lang \\${WORKSPACE}`/Dockerfile.standalone \\${WORKSPACE}")
                             shell("docker push -a \\${IMAGE_NAME}")
-                                script {
-                                    def pythonImage() {
-                                        build(job: 'Whanos base images/whanos-puthon')
-                                        return docker.image('whanos-python-base')
-                                    }
-                                    def javascriptImage() {
-                                        build(job: 'Whanos base images/whanos-javascript')
-                                        return docker.image('whanos-javascript-base')
-                                    }
-                                    def javaImage() {
-                                        build(job: 'Whanos base images/whanos-java')
-                                        return docker.image('whanos-java-base')
-                                    }
-                                    def cImage() {
-                                        build(job: 'Whanos base images/whanos-c')
-                                        return docker.image('whanos-c-base')
-                                    }
-                                    def befungeImage() {
-                                        build(job: 'Whanos base images/whanos-befunge')
-                                        return docker.image('whanos-befunge-base')
-                                    }
-
-                                    def lang = sh(script: 'python find_lang ${env.WORKSPACE}'', returnStdout: true)
-                                    def image
-                                    if (lang == 'whanos-python') {
-                                        image = pythonImage()
-                                    } else if (lang == 'whanos-javascript') {
-                                        image = javascriptImage()
-                                    } else if (lang == 'whanos-C') {
-                                        image = cImage()
-                                    } else if (lang == 'whanos-befunge') {
-                                        image = befungeImage()
-                                    } els if (lang == 'whanos-java') {
-                                        image = javaImage()
-                                    }
-                                    def container = image.run('-d -p 127.0.0.1:3000:3000', '--name my-container-name')
+                            script {
+                                def pythonImage() {
+                                    build(job: 'Whanos base images/whanos-puthon')
+                                    return docker.image('whanos-python-base')
                                 }
+                                def javascriptImage() {
+                                    build(job: 'Whanos base images/whanos-javascript')
+                                    return docker.image('whanos-javascript-base')
+                                }
+                                def javaImage() {
+                                    build(job: 'Whanos base images/whanos-java')
+                                    return docker.image('whanos-java-base')
+                                }
+                                def cImage() {
+                                    build(job: 'Whanos base images/whanos-c')
+                                    return docker.image('whanos-c-base')
+                                }
+                                def befungeImage() {
+                                    build(job: 'Whanos base images/whanos-befunge')
+                                    return docker.image('whanos-befunge-base')
+                                }
+                                def lang = sh(script: 'python find_lang ${env.WORKSPACE}'', returnStdout: true)
+                                def image
+                                if (lang == 'whanos-python') {
+                                    image = pythonImage()
+                                } else if (lang == 'whanos-javascript') {
+                                    image = javascriptImage()
+                                } else if (lang == 'whanos-C') {
+                                    image = cImage()
+                                } else if (lang == 'whanos-befunge') {
+                                    image = befungeImage()
+                                } els if (lang == 'whanos-java') {
+                                    image = javaImage()
+                                }
+                                def container = image.run('-d -p 127.0.0.1:3000:3000', '--name my-container-name')
+                            }
                         }
                     }
             ''')
