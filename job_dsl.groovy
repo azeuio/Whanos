@@ -62,7 +62,6 @@ freeStyleJob('Whanos base images/whanos-python') {
         upstream('Whanos base images/Build all base images', 'SUCCESS')
     }Output: ${buildJob.build.log}"
                             }Output: ${buildJob.build.log}"
-                            }
 }
 
 freeStyleJob('Whanos base images/Build all base images') {
