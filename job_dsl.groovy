@@ -70,6 +70,7 @@ freeStyleJob('Whanos base images/Build all base images') {
 }
 
 freeStyleJob('link-project') {
+    description('link project repo test')
     description('link project repo')
     parameters {
         stringParam('GIT_REPOSITORY_URL', '', 'Git URL of the repository to clone')
@@ -102,7 +103,7 @@ freeStyleJob('link-project') {
                                 git {
                                     remote {
                                         url(GIT_REPOSITORY_URL)
-                                        // credentials(SSH_KEY_REPO)
+                                        credentials(SSH_KEY_REPO)
                                     }
                                     branches('*/main')
                                 }
@@ -150,11 +151,8 @@ freeStyleJob('link-project') {
                                 def container = image.run('-d -p 127.0.0.1:3000:3000', '--name my-container-name')
                             }
                             ''')
-                            }
-                        }
-                    }
-                ''')
         shell('mkdir -p ${JENKINS_HOME}/persistent && \
         mv key_file.json ${JENKINS_HOME}/persistent/${PROJECT_NAME}_key_file.json')
+        }
     }
 }
