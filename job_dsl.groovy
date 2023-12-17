@@ -122,6 +122,10 @@ freeStyleJob('link-project') {
                                     build(job: 'Whanos base images/whanos-javascript')
                                     return docker.image('whanos-javascript-base')
                                 }
+                                def javaImage() {
+                                    build(job: 'Whanos base images/whanos-java')
+                                    return docker.image('whanos-java-base')
+                                }
                                 def cImage() {
                                     build(job: 'Whanos base images/whanos-c')
                                     return docker.image('whanos-c-base')
@@ -141,6 +145,8 @@ freeStyleJob('link-project') {
                                     image = cImage()
                                 } else if (lang == 'whanos-befunge') {
                                     image = befungeImage()
+                                } els if (lang == 'whanos-java') {
+                                    image = javaImage()
                                 }
                                 def container = image.run('-d -p 127.0.0.1:3000:3000', '--name my-container-name')
                             }
