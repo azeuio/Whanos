@@ -143,9 +143,6 @@ freeStyleJob('link-project') {
                                     image = befungeImage()
                                 }
                                 def container = image.run('-d -p 127.0.0.1:3000:3000', '--name my-container-name')
-
-                                container.stop()
-                                container.remove()
                             }
                             ''')
                             }
