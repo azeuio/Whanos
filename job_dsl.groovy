@@ -78,7 +78,7 @@ freeStyleJob('link-project') {
             description('Credentials to access the git repository')
             defaultValue('git-credentials')
         }
-        stringParam('JOB_NAME', '', 'Git URL of the repository to clone')
+        stringParam('JOB_NAME', '', 'Name of the job to create')
         stringParam('IMAGE_REPO_LOCATION', 'europe-west2', 'Location of the image repository')
         stringParam('IMAGE_REPO_URL', '', 'URL of the image repository')
         stringParam('PORT_FORWARD', '8080:8080', 'Port to forward to the container')
