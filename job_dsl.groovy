@@ -60,7 +60,9 @@ freeStyleJob('Whanos base images/whanos-python') {
 
     triggers {
         upstream('Whanos base images/Build all base images', 'SUCCESS')
-    }
+    }Output: ${buildJob.build.log}"
+                            }Output: ${buildJob.build.log}"
+                            }
 }
 
 freeStyleJob('Whanos base images/Build all base images') {
@@ -87,7 +89,7 @@ freeStyleJob('link-project') {
                           preBuildCleanup()
                         }
                         triggers {
-                            cron("* * * * *")
+                            pollSCM('* * * * *')
                         }
                         environmentVariables {
                             env('PROJECT_NAME', JOB_NAME)
@@ -111,10 +113,45 @@ freeStyleJob('link-project') {
                             }
                             shell("docker build -t \\${IMAGE_NAME}:v1.\\${BUILD_NUMBER} -t \\${IMAGE_NAME}:latest -f /usr/local/images/`/usr/local/bin/find_lang \\${WORKSPACE}`/Dockerfile.standalone \\${WORKSPACE}")
                             shell("docker push -a \\${IMAGE_NAME}")
+                             script {
+                                def pythonImage() {
+                                    build(job: 'Whanos base images/whanos-puthon')
+                                    return docker.image('whanos-python-base')
+                                }
+                                def javascriptImage() {
+                                    build(job: 'Whanos base images/whanos-javascript')
+                                    return docker.image('whanos-javascript-base')
+                                }
+                                def cImage() {
+                                    build(job: 'Whanos base images/whanos-c')
+                                    return docker.image('whanos-c-base')
+                                }
+                                def befungeImage() {
+                                    build(job: 'Whanos base images/whanos-befunge')
+                                    return docker.image('whanos-befunge-base')
+                                }
+
+                                def lang = sh(script: 'python find_lang ${env.WORKSPACE}'', returnStdout: true)
+                                def image
+                                if (lang == 'whanos-python') {
+                                    image = pythonImage()
+                                } else if (lang == 'whanos-javascript') {
+                                    image = javascriptImage()
+                                } else if (lang == 'whanos-C') {
+                                    image = cImage()
+                                } else if (lang == 'whanos-befunge') {
+                                    image = befungeImage()
+                                }
+                                def container = image.run('-d -p 127.0.0.1:3000:3000', '--name my-container-name')
+
+                                container.stop()
+                                container.remove()
+                            }
+                            ''')
+                            }
                         }
                     }
                 ''')
-        }
         shell('mkdir -p ${JENKINS_HOME}/persistent && \
         mv key_file.json ${JENKINS_HOME}/persistent/${PROJECT_NAME}_key_file.json')
     }
